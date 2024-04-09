@@ -1,5 +1,21 @@
-set(COMPONENT_SRCS "gui.c""gui_app.c")
-set(COMPONENT_ADD_INCLUDEDIRS "")
-set(COMPONENT_PRIV_REQUIRES lvgl lvgl_esp32_drivers esp_timer)
+idf_component_register(
+    SRCS
+        "gui.c"
+        "gui_app.c"
 
-register_component()
+        "squareline/components/ui_comp_hook.c"
+
+        "squareline/screens/ui_Screen1.c"
+
+        "squareline/ui.c"
+        "squareline/ui_helpers.c"
+
+    INCLUDE_DIRS
+        ""
+        "squareline"
+
+    REQUIRES
+        lvgl
+        lvgl_esp32_drivers
+        esp_timer
+)
