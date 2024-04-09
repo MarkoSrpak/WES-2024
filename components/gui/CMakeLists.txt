@@ -1,7 +1,7 @@
 idf_component_register(
     SRCS
         "gui.c"
-        "gui_app.c"
+        "app.c"
 
         "squareline/components/ui_comp_hook.c"
 
