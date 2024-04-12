@@ -18,4 +18,5 @@ idf_component_register(
         lvgl
         lvgl_esp32_drivers
         esp_timer
+        wifi
 )

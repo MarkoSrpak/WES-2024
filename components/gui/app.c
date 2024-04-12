@@ -21,6 +21,9 @@
 
 // squareline
 #include "ui.h"
+
+// wifi
+#include "wifi.h"
 /*--------------------------- MACROS AND DEFINES -----------------------------*/
 /*--------------------------- TYPEDEFS AND STRUCTS ---------------------------*/
 /*--------------------------- STATIC FUNCTION PROTOTYPES ---------------------*/
@@ -31,6 +34,8 @@ static void _app_task(void *p_parameter);
 static void _app_task(void *p_parameter)
 {
     (void)p_parameter;
+    wifi_init();
+    wifi_provision();
     for (;;) {
         printf("Hello world\n");
         vTaskDelay(1000 / portTICK_PERIOD_MS);
