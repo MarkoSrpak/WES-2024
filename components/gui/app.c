@@ -29,6 +29,8 @@
 #include "led_pwm.h"
 
 #include "coms.h"
+
+#include "accelerometer.h"
 /*--------------------------- MACROS AND DEFINES -----------------------------*/
 /*--------------------------- TYPEDEFS AND STRUCTS ---------------------------*/
 /*--------------------------- STATIC FUNCTION PROTOTYPES ---------------------*/
@@ -50,8 +52,24 @@ static void _app_task(void *p_parameter)
     wifi_init();
     wifi_provision();
     for (;;) {
-        printf("Hello world\n");
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        uint8_t X_L = SPI_read(0x28);
+        uint8_t X_H = SPI_read(0x29);
+
+        int16_t X = (X_H << 8) | (X_L);
+        vTaskDelay(100 / portTICK_PERIOD_MS);
+
+        uint8_t Y_L = SPI_read(0x2A);
+        uint8_t Y_H = SPI_read(0x2B);
+        int16_t Y = (Y_H << 8) | (Y_L);
+        vTaskDelay(100 / portTICK_PERIOD_MS);
+
+        uint8_t Z_L = SPI_read(0x2C);
+        uint8_t Z_H = SPI_read(0x2D);
+        int16_t Z = (Z_H << 8) | (Z_L);
+        vTaskDelay(100 / portTICK_PERIOD_MS);
+
+        printf("x: %d y: %d z: %d\n", X, Y, Z);
+        vTaskDelay(500 / portTICK_PERIOD_MS);
     }
 }
 
