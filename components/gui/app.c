@@ -26,6 +26,8 @@
 #include "mqtt_driver.h"
 #include "wifi.h"
 
+#include "led_pwm.h"
+
 #include "coms.h"
 /*--------------------------- MACROS AND DEFINES -----------------------------*/
 /*--------------------------- TYPEDEFS AND STRUCTS ---------------------------*/
