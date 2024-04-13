@@ -53,7 +53,7 @@ int send_sensor_data(int temp, int hum, float x, float y, float z)
     cJSON_Delete(root);
 
     // Print JSON data for testing
-    // printf("JSON Data: %s\n", json_data);
+    printf("JSON Data: %s\n", json_data);
 
     // Do something with json_data
     mqtt_publish("WES/Jupiter/sensors", json_data);

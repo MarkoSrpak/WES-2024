@@ -43,19 +43,18 @@ static void _app_task(void *p_parameter)
 {
     (void)p_parameter;
 
-    send_sensor_data(25, 23, 0.5, -0.3, 0.1);
-
     int indexX[] = {0, 4, -1};
     int indexO[] = {1, 2, -1};
     bool is_server = "true";
-    send_game_data(indexX, indexO, is_server);
+    // send_game_data(indexX, indexO, is_server);
 
     wifi_init();
     wifi_provision();
 
     for (;;) {
+        send_sensor_data(25, 23, 0.5, -0.3, 0.1);
         printf("Hello world\n");
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        vTaskDelay(5000 / portTICK_PERIOD_MS);
     }
 }
 

@@ -34,7 +34,7 @@
 #include "esp_log.h"
 #include "mqtt_client.h"
 /*--------------------------- MACROS AND DEFINES -----------------------------*/
-#define BROKER_URL "mqtt://192.168.254.6"
+#define BROKER_URL "mqtt://4gpc.l.time4vps.cloud"
 /*--------------------------- TYPEDEFS AND STRUCTS ---------------------------*/
 /*--------------------------- STATIC FUNCTION PROTOTYPES ---------------------*/
 /*--------------------------- VARIABLES --------------------------------------*/
