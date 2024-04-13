@@ -3,6 +3,8 @@ idf_component_register(
         "gui.c"
         "app.c"
 
+        "src/coms.c"
+
         "squareline/components/ui_comp_hook.c"
 
         "squareline/screens/ui_Screen1.c"
@@ -13,6 +15,7 @@ idf_component_register(
     INCLUDE_DIRS
         ""
         "squareline"
+        "inc"
 
     REQUIRES
         lvgl
