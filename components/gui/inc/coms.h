@@ -18,6 +18,6 @@
 /*--------------------------- GLOBAL FUNCTION PROTOTYPES ---------------------*/
 
 int send_sensor_data(int temp, int hum, float x, float y, float z);
-int send_game_data();
+int send_game_data(int *indexX_moves, int *indexO_moves, bool is_server);
 
 #endif /*INC_COMS_H*/

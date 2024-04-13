@@ -40,7 +40,12 @@ static void _app_task(void *p_parameter)
 {
     (void)p_parameter;
 
-    send_sensor_data(1, 2, 3.1, 4.1, 5.1);
+    send_sensor_data(25, 23, 0.5, -0.3, 0.1);
+
+    int indexX[] = {0, 4, -1};
+    int indexO[] = {1, 2, -1};
+    bool is_server = "true";
+    send_game_data(indexX, indexO, is_server);
 
     wifi_init();
     wifi_provision();
