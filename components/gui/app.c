@@ -23,6 +23,7 @@
 #include "ui.h"
 
 // wifi
+#include "mqtt_driver.h"
 #include "wifi.h"
 
 #include "coms.h"
@@ -36,8 +37,8 @@ static void _app_task(void *p_parameter);
 static void _app_task(void *p_parameter)
 {
     (void)p_parameter;
-  
-  send_sensor_data(1, 2, 3.1, 4.1, 5.1);
+
+    send_sensor_data(1, 2, 3.1, 4.1, 5.1);
 
     wifi_init();
     wifi_provision();

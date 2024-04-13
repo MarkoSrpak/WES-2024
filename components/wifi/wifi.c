@@ -155,6 +155,29 @@ int wifi_init()
 }
 int wifi_connect()
 {
+    // AKO JE SOFT AP PROVISIONING ONDA OVO
+#ifdef PROV_METHOD_SOFTAP
+    esp_netif_create_default_wifi_ap();
+#endif
+
+    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
+
+#ifdef PROV_METHOD_SOFTAP
+    wifi_prov_mgr_config_t config = {.scheme = wifi_prov_scheme_softap,
+                                     .scheme_event_handler =
+                                         WIFI_PROV_EVENT_HANDLER_NONE};
+#endif
+
+#ifdef PROV_METHOD_BLE
+    wifi_prov_mgr_config_t config = {
+        .scheme = wifi_prov_scheme_ble,
+        .scheme_event_handler = WIFI_PROV_SCHEME_BLE_EVENT_HANDLER_FREE_BTDM};
+#endif
+    /* Initialize provisioning manager with the
+     * configuration parameters set above */
+    ESP_ERROR_CHECK(wifi_prov_mgr_init(config));
+
     bool provisioned = false;
     /* Let's find out if the device is provisioned */
     ESP_ERROR_CHECK(wifi_prov_mgr_is_provisioned(&provisioned));
@@ -163,13 +186,20 @@ int wifi_connect()
     if (!provisioned) {
         return 1;
     } else {
-        ESP_LOGI(TAG, "Starting Wi-Fi STA");
+        ESP_LOGI(TAG, "Already provisioned, starting Wi-Fi STA");
+
+        /* We don't need the manager as device is already provisioned,
+         * so let's release it's resources */
+        wifi_prov_mgr_deinit();
+
         /* Start Wi-Fi station */
         wifi_init_sta();
     }
+
     /* Wait for Wi-Fi connection */
     xEventGroupWaitBits(wifi_event_group, WIFI_CONNECTED_EVENT, false, true,
                         portMAX_DELAY);
+
     return 0;
 }
 int wifi_provision()
