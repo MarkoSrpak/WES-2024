@@ -24,6 +24,8 @@ idf_component_register(
         esp_timer
         wifi
         led_pwm
+        button
         mqtt_driver
         accelerometer
+        i2c
 )
