@@ -15,8 +15,8 @@
 #include "sdkconfig.h"
 #include <stdio.h>
 /*--------------------------- MACROS AND DEFINES -----------------------------*/
-#define I2C_MASTER_SCL_IO         21U /*!< GPIO number used for I2C master clock */
-#define I2C_MASTER_SDA_IO         22U /*!< GPIO number used for I2C master data  */
+#define I2C_MASTER_SCL_IO         21 /*!< GPIO number used for I2C master clock */
+#define I2C_MASTER_SDA_IO         22 /*!< GPIO number used for I2C master data  */
 #define I2C_MASTER_NUM            0
 #define I2C_MASTER_FREQ_HZ        400000 /*!< I2C master clock frequency */
 #define I2C_MASTER_TX_BUF_DISABLE 0      /*!< I2C master doesn't need buffer */
@@ -41,7 +41,7 @@ int i2c_start_measurement()
     return 0;
 }
 
-int read_temp(uint16_t *temp, uint16_t *humidity)
+int read_temp(double *temp, double *humidity)
 {
     /*  uint8_t write_buf[2] = {0xE0, 0x00};
       i2c_master_write_to_device(I2C_MASTER_NUM, SENSOR_ADDR, write_buf,
@@ -53,13 +53,15 @@ int read_temp(uint16_t *temp, uint16_t *humidity)
     i2c_master_read_from_device(I2C_MASTER_NUM, SENSOR_ADDR, read_buffer, 6,
                                 I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS);
 
-    printf("%x:%x:%x::%x:%x:%x\n", read_buffer[0], read_buffer[1],
-           read_buffer[2], read_buffer[3], read_buffer[4], read_buffer[5]);
-    uint16_t temp_r = (uint16_t)(read_buffer[0] << 8) | (read_buffer[1]);
-    uint16_t humi_r = (uint16_t)(read_buffer[3] << 8) | (read_buffer[4]);
+    // printf("%x:%x:%x::%x:%x:%x\n", read_buffer[0], read_buffer[1],
+    // read_buffer[2], read_buffer[3], read_buffer[4], read_buffer[5]);
+    uint16_t temp_r =
+        (uint16_t)((((uint16_t)read_buffer[0]) << 8) | read_buffer[1]);
+    uint16_t humi_r =
+        (uint16_t)((((uint16_t)read_buffer[3]) << 8) | read_buffer[4]);
 
-    *temp = (175 * temp_r / ((2 ^ 16) - 1) - 45);
-    *humidity = (100 * (humi_r / ((2 ^ 16) - 1)));
+    *temp = (double)(temp_r) / 65535.0f * 175.0f - 45.0f;
+    *humidity = (double)(humi_r) / 65535.0f * 100.0f;
 
     return 0;
 }
