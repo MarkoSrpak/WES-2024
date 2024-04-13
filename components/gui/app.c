@@ -15,6 +15,9 @@
 #include "freertos/task.h"
 #include <stdio.h>
 
+// button
+#include "button.h"
+
 // lvgl
 #include "lvgl.h"
 #include "lvgl_helpers.h"
@@ -26,13 +29,13 @@
 #include "mqtt_driver.h"
 #include "wifi.h"
 
-#include "led_pwm.h"
-
-#include "coms.h"
+// i2c
+#include "i2c.h"
 /*--------------------------- MACROS AND DEFINES -----------------------------*/
 /*--------------------------- TYPEDEFS AND STRUCTS ---------------------------*/
 /*--------------------------- STATIC FUNCTION PROTOTYPES ---------------------*/
 static void _app_task(void *p_parameter);
+
 /*--------------------------- VARIABLES --------------------------------------*/
 /*--------------------------- STATIC FUNCTIONS -------------------------------*/
 
@@ -49,6 +52,7 @@ static void _app_task(void *p_parameter)
 
     wifi_init();
     wifi_provision();
+
     for (;;) {
         printf("Hello world\n");
         vTaskDelay(1000 / portTICK_PERIOD_MS);
