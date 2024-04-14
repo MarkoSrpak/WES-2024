@@ -15,10 +15,12 @@
 /*--------------------------- MACROS AND DEFINES -----------------------------*/
 /*--------------------------- TYPEDEFS AND STRUCTS ---------------------------*/
 /*--------------------------- EXTERN -----------------------------------------*/
+extern time_t now;
 /*--------------------------- GLOBAL FUNCTION PROTOTYPES ---------------------*/
 
 int wifi_init();
 int wifi_connect();
 int wifi_provision();
+void show_current_time(char *strftime_buf);
 
 #endif /*WIFI_WIFI_H*/

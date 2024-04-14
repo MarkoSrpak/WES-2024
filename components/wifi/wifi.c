@@ -16,6 +16,9 @@
 #include <freertos/event_groups.h>
 #include <freertos/task.h>
 
+#include "esp_attr.h"
+#include "esp_sleep.h"
+#include "esp_sntp.h"
 #include <esp_event.h>
 #include <esp_log.h>
 #include <esp_wifi.h>
@@ -28,13 +31,37 @@
 #define PROV_MGR_MAX_RETRY_CNT 5
 #define PROV_METHOD_SOFTAP
 // #define PROV_METHOD_BLE
+#define SNTP_TIME_SERVER "pool.ntp.org"
 /*--------------------------- TYPEDEFS AND STRUCTS ---------------------------*/
 /*--------------------------- STATIC FUNCTION PROTOTYPES ---------------------*/
+static void initialize_sntp(void);
 /*--------------------------- VARIABLES --------------------------------------*/
+/* Variable holding number of times ESP32 restarted since first boot.
+ * It is placed into RTC memory using RTC_DATA_ATTR and
+ * maintains its value when ESP32 wakes from deep sleep.
+ */
+RTC_DATA_ATTR static int boot_count = 0;
 static const char *TAG = "wifi";
 const int WIFI_CONNECTED_EVENT = BIT0;
 static EventGroupHandle_t wifi_event_group;
 /*--------------------------- STATIC FUNCTIONS -------------------------------*/
+void show_current_time(char *strftime_buf)
+{
+    time_t now;
+    struct tm timeinfo;
+
+    time(&now);
+    localtime_r(&now, &timeinfo);
+
+    strftime(strftime_buf, 64, "%c", &timeinfo);
+    printf("Current time is: %s\n", strftime_buf);
+}
+
+void time_sync_notification_cb(struct timeval *tv)
+{
+    ESP_LOGI(TAG, "Notification of a time synchronization event");
+}
+
 /* Event handler for catching system events */
 static void event_handler(void *arg, esp_event_base_t event_base,
                           int32_t event_id, void *event_data)
@@ -102,11 +129,57 @@ static void event_handler(void *arg, esp_event_base_t event_base,
     }
 }
 
+static void initialize_sntp(void)
+{
+    ESP_LOGI(TAG, "Initializing SNTP");
+    esp_sntp_setoperatingmode(ESP_SNTP_OPMODE_POLL);
+    // otherwise, use DNS address from a pool
+    esp_sntp_setservername(0, SNTP_TIME_SERVER);
+    sntp_set_time_sync_notification_cb(time_sync_notification_cb);
+    esp_sntp_init();
+}
+
 static void wifi_init_sta(void)
 {
     /* Start Wi-Fi in station mode */
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
     ESP_ERROR_CHECK(esp_wifi_start());
+
+    initialize_sntp();
+
+    /* Wait for time to be synchronized */
+    while (sntp_get_sync_status() != SNTP_SYNC_STATUS_COMPLETED) {
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+    }
+
+    time_t now;
+    char strftime_buf[64];
+    struct tm timeinfo;
+    time(&now);
+
+    // Set timezone to Central European Summer Time
+    setenv("TZ", "CST-2", 1);
+    tzset();
+
+    localtime_r(&now, &timeinfo);
+    strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
+
+    ESP_LOGI(TAG, "The current date/time is: %s", strftime_buf);
+    char strftime_buffer[64];
+    // show_current_time(strftime_buffer);
+
+    if (sntp_get_sync_mode() == SNTP_SYNC_MODE_SMOOTH) {
+        struct timeval outdelta;
+        while (sntp_get_sync_status() == SNTP_SYNC_STATUS_IN_PROGRESS) {
+            adjtime(NULL, &outdelta);
+            ESP_LOGI(TAG,
+                     "Waiting for adjusting time ... outdelta = %jd sec: %li "
+                     "ms: %li us",
+                     (intmax_t)outdelta.tv_sec, outdelta.tv_usec / 1000,
+                     outdelta.tv_usec % 1000);
+            vTaskDelay(2000 / portTICK_PERIOD_MS);
+        }
+    }
 }
 
 static void get_device_service_name(char *service_name, size_t max)
@@ -120,6 +193,14 @@ static void get_device_service_name(char *service_name, size_t max)
 /*--------------------------- GLOBAL FUNCTIONS -------------------------------*/
 int wifi_init()
 {
+    ++boot_count;
+    ESP_LOGI(TAG, "Boot count: %d", boot_count);
+
+    time_t now;
+    struct tm timeinfo;
+    time(&now);
+    localtime_r(&now, &timeinfo);
+
     /* Initialize NVS partition */
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES
@@ -139,7 +220,8 @@ int wifi_init()
     ESP_ERROR_CHECK(esp_event_loop_create_default());
     wifi_event_group = xEventGroupCreate();
 
-    /* Register our event handler for Wi-Fi, IP and Provisioning related events
+    /* Register our event handler for Wi-Fi, IP and Provisioning related
+     * events
      */
     ESP_ERROR_CHECK(esp_event_handler_register(
         WIFI_PROV_EVENT, ESP_EVENT_ANY_ID, &event_handler, NULL));
@@ -248,16 +330,18 @@ int wifi_provision()
 
         /* What is the security level that we want (0, 1, 2):
          *      - WIFI_PROV_SECURITY_0 is simply plain text communication.
-         *      - WIFI_PROV_SECURITY_1 is secure communication which consists of
-         * secure handshake using X25519 key exchange and proof of possession
-         * (pop) and AES-CTR for encryption/decryption of messages.
+         *      - WIFI_PROV_SECURITY_1 is secure communication which
+         * consists of secure handshake using X25519 key exchange and proof
+         * of possession (pop) and AES-CTR for encryption/decryption of
+         * messages.
          *      - WIFI_PROV_SECURITY_2 SRP6a based authentication and key
          * exchange
          *        + AES-GCM encryption/decryption of messages
          */
         wifi_prov_security_t security = WIFI_PROV_SECURITY_1;
 
-        /* Do we want a proof-of-possession (ignored if Security 0 is selected):
+        /* Do we want a proof-of-possession (ignored if Security 0 is
+         * selected):
          *      - this should be a string with length > 0
          *      - NULL if not used
          */
@@ -279,16 +363,17 @@ int wifi_provision()
         const char *service_key = NULL;
 
 #ifdef PROV_METHOD_BLE
-        /* This step is only useful when scheme is wifi_prov_scheme_ble. This
-         * will set a custom 128 bit UUID which will be included in the BLE
-         * advertisement and will correspond to the primary GATT service that
-         * provides provisioning endpoints as GATT characteristics. Each GATT
-         * characteristic will be formed using the primary service UUID as base,
-         * with different auto assigned 12th and 13th bytes (assume counting
-         * starts from 0th byte). The client side applications must identify the
-         * endpoints by reading the User Characteristic Description descriptor
-         * (0x2901) for each characteristic, which contains the endpoint name of
-         * the characteristic */
+        /* This step is only useful when scheme is wifi_prov_scheme_ble.
+         * This will set a custom 128 bit UUID which will be included in the
+         * BLE advertisement and will correspond to the primary GATT service
+         * that provides provisioning endpoints as GATT characteristics.
+         * Each GATT characteristic will be formed using the primary service
+         * UUID as base, with different auto assigned 12th and 13th bytes
+         * (assume counting starts from 0th byte). The client side
+         * applications must identify the endpoints by reading the User
+         * Characteristic Description descriptor (0x2901) for each
+         * characteristic, which contains the endpoint name of the
+         * characteristic */
         uint8_t custom_service_uuid[] = {
             /* LSB <---------------------------------------
              * ---------------------------------------> MSB */
@@ -296,9 +381,10 @@ int wifi_provision()
             0xea, 0x4a, 0x82, 0x03, 0x04, 0x90, 0x1a, 0x02,
         };
 
-        /* If your build fails with linker errors at this point, then you may
-         * have forgotten to enable the BT stack or BTDM BLE settings in the SDK
-         * (e.g. see the sdkconfig.defaults in the example project) */
+        /* If your build fails with linker errors at this point, then you
+         * may have forgotten to enable the BT stack or BTDM BLE settings in
+         * the SDK (e.g. see the sdkconfig.defaults in the example project)
+         */
         wifi_prov_scheme_ble_set_service_uuid(custom_service_uuid);
 #endif
         /* Start provisioning service */
