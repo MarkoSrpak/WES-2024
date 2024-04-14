@@ -25,5 +25,8 @@ void add_image_to_button(lv_obj_t *button, lv_img_dsc_t *image_descriptor,
 void remove_image_from_button(lv_obj_t *button);
 int send_empty();
 int add_piece(int position, int type);
+bool check_win(int player);
+bool check_draw();
+int determine_winner();
 
 #endif /*INC_TICTAC_H*/

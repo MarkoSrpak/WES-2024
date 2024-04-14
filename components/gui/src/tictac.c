@@ -14,6 +14,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"
 #include "freertos/task.h"
+#include <stdbool.h>
 #include <stdio.h>
 // lvgl
 #include "lvgl.h"
@@ -39,6 +40,60 @@ int indexO_moves[10] = {
 lv_obj_t *img_objects[9];
 /*--------------------------- STATIC FUNCTIONS -------------------------------*/
 /*--------------------------- GLOBAL FUNCTIONS -------------------------------*/
+// Function to check if a player has won
+bool check_win(int player)
+{
+    // Check rows
+    for (int i = 0; i < 3; i++) {
+        if (board[i * 3] == player && board[i * 3 + 1] == player
+            && board[i * 3 + 2] == player) {
+            return true;
+        }
+    }
+
+    // Check columns
+    for (int i = 0; i < 3; i++) {
+        if (board[i] == player && board[i + 3] == player
+            && board[i + 6] == player) {
+            return true;
+        }
+    }
+
+    // Check diagonals
+    if (board[0] == player && board[4] == player && board[8] == player) {
+        return true;
+    }
+    if (board[2] == player && board[4] == player && board[6] == player) {
+        return true;
+    }
+
+    return false;
+}
+
+// Function to check if the game is a draw
+bool check_draw()
+{
+    for (int i = 0; i < 9; i++) {
+        if (board[i] == 0) {
+            return false; // There's still an empty space, game is not draw
+        }
+    }
+    return true; // All spaces are filled, game is draw
+}
+
+// Function to determine the winner of the game
+int determine_winner()
+{
+    if (check_win(1)) {
+        return 1; // Player X wins
+    } else if (check_win(2)) {
+        return 2; // Player O wins
+    } else if (check_draw()) {
+        return -1; // It's a draw
+    } else {
+        return 0; // Game is still ongoing
+    }
+}
 int send_empty()
 {
     int indexX_moves[10] = {-1}; // Initialize with -1 to ensure termination
