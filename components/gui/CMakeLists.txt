@@ -28,4 +28,5 @@ idf_component_register(
         mqtt_driver
         accelerometer
         i2c
+        joy
 )

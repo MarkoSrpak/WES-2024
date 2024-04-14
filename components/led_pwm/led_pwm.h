@@ -49,5 +49,6 @@ int led_toggle(int led_id);
 int led_on_pwm_pattern(int led_id, int pwm_percentage, int time_on_ms,
                        int time_off_ms);
 int stop_running_pattern(int led_id);
+void send_SOS();
 
 #endif /*LED_PWM_LED_PWM_H*/

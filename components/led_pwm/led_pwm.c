@@ -34,11 +34,11 @@
 /*--------------------------- STATIC FUNCTION PROTOTYPES ---------------------*/
 void vCallbackFunction(TimerHandle_t xTimer);
 static int led_timer_init();
-uint32_t timer_refresh = 100;
+uint32_t timer_refresh = 50;
 /*--------------------------- VARIABLES --------------------------------------*/
 TimerHandle_t periodic_timer;
+TimerHandle_t sos_timer;
 bool is_timer_inited = false;
-static const char *TAG = "ledc";
 uint32_t led_on_saved[4];
 uint32_t led_off_saved[4];
 uint32_t led_on_left[4];
@@ -47,12 +47,31 @@ uint32_t led_is_on[4];
 uint32_t led_pwm[4];
 bool is_running_pattern[4];
 bool led_is_on_toggle[4];
+int sosflagg = 0;
 /*--------------------------- STATIC FUNCTIONS -------------------------------*/
+void vCallbackFunction_prviS(TimerHandle_t xTimer)
+{
+    if (sosflagg == 0) {
+        led_on_pwm_pattern(3, 50, 1000, 200);
+        sosflagg = 1;
+        xTimerChangePeriod(xTimer, pdMS_TO_TICKS(3600), 0);
+        xTimerStart(sos_timer, 0);
+
+    } else if (sosflagg == 1) {
+        led_on_pwm_pattern(3, 50, 500, 200);
+        sosflagg = 2;
+        xTimerChangePeriod(xTimer, pdMS_TO_TICKS(2600), 0);
+        xTimerStart(sos_timer, 0);
+    } else if (sosflagg == 2) {
+        stop_running_pattern(3);
+        sosflagg = 0;
+    }
+}
+
 void vCallbackFunction(TimerHandle_t xTimer)
 {
     for (int i = 0; i < 4; i++) {
         if (is_running_pattern[i]) {
-            ESP_LOGI(TAG, "run pattern %d", i);
             if (led_is_on[i]) {
                 if (led_on_left[i] > 0) {
                     led_on_left[i] -= timer_refresh;
@@ -173,4 +192,13 @@ int led_toggle(int led_id)
         led_on(led_id);
     }
     return 0;
+}
+
+void send_SOS()
+{
+    led_init(3);
+    led_on_pwm_pattern(3, 50, 500, 200); // kratki + pauza
+    sos_timer = xTimerCreate("periodic", pdMS_TO_TICKS(2600), pdFALSE,
+                             (void *)0, vCallbackFunction_prviS);
+    xTimerStart(sos_timer, 0);
 }

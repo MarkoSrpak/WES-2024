@@ -14,6 +14,11 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include <stdio.h>
+// accelerometer
+#include "accelerometer.h"
+
+// led_wm
+#include "led_pwm.h"
 
 // button
 #include "button.h"
@@ -31,10 +36,14 @@
 
 // i2c
 #include "i2c.h"
+
+// joy
+#include "joy.h"
+
 /*--------------------------- MACROS AND DEFINES -----------------------------*/
 /*--------------------------- TYPEDEFS AND STRUCTS ---------------------------*/
 /*--------------------------- STATIC FUNCTION PROTOTYPES ---------------------*/
-static void _app_task(void *p_parameter);
+// static void _app_task(void *p_parameter);
 
 /*--------------------------- VARIABLES --------------------------------------*/
 /*--------------------------- STATIC FUNCTIONS -------------------------------*/
@@ -43,22 +52,32 @@ static void _app_task(void *p_parameter)
 {
     (void)p_parameter;
 
-    // int indexX[] = {0, 4, -1};
-    // int indexO[] = {1, 2, -1};
-    // bool is_server = "true";
-    //  send_game_data(indexX, indexO, is_server);
+    int indexX[] = {0, 4, -1};
+    int indexO[] = {1, 2, -1};
+    bool is_server = "true";
+    // send_game_data(indexX, indexO, is_server);
 
     // wifi_init();
     // wifi_provision();
-    wifi_init();
-    wifi_connect();
+    // wifi_connect();
+
     i2c_init();
     double temp;
     double hum;
+
+    // send_SOS();
+    adc_init();
+    SPI_init();
+    SPI_write(0x20, 0b01110111);
+    SPI_write(0x23, 0b00110000);
+
     for (;;) {
         // send_sensor_data(25, 23, 0.5, -0.3, 0.1);
         printf("Hello world\n");
-        vTaskDelay(5000 / portTICK_PERIOD_MS);
+        // int Xjoy = adc_read_x();
+        // int Yjoy = adc_read_y();
+        // printf("x:%d y:%d\n", Xjoy, Yjoy);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }
 

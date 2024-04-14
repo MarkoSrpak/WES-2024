@@ -8,26 +8,24 @@
  *
  */
 
-#ifndef ACCELEROMETER_H
-#define ACCELEROMETER_H
+#ifndef joy_H
+#define joy_H
 
 /*--------------------------- INCLUDES ---------------------------------------*/
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "sdkconfig.h"
-#include <stdio.h>
-
 /*--------------------------- MACROS AND DEFINES -----------------------------*/
+#define JOYSTICK_X (34u)
+#define JOYSTICK_Y (35u)
+
+#define ADC1_CHAN6 ADC_CHANNEL_6 // channel for X
+#define ADC1_CHAN7 ADC_CHANNEL_7 // channel for Y
+
+#define EXAMPLE_ADC_ATTEN ADC_ATTEN_DB_11
+
 /*--------------------------- TYPEDEFS AND STRUCTS ---------------------------*/
+int adc_init(void);
+int adc_read_x();
+int adc_read_y();
 /*--------------------------- EXTERN -----------------------------------------*/
 /*--------------------------- GLOBAL FUNCTION PROTOTYPES ---------------------*/
-void SPI_init();
-uint8_t SPI_transaction(uint8_t address, uint8_t rwb, uint8_t data);
-void SPI_write(uint8_t address, uint8_t data);
-uint8_t SPI_read(uint8_t address);
-float SPI_get_Z();
-float SPI_get_Y();
-float SPI_get_X();
-int dummy_read();
 
-#endif /*ACCELEROMETER_H*/
+#endif /*joy_H*/
