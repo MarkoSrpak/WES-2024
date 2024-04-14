@@ -22,5 +22,6 @@ int wifi_init();
 int wifi_connect();
 int wifi_provision();
 void show_current_time(char *strftime_buf);
+void get_current_time_from_rtc(struct tm *timeinfo);
 
 #endif /*WIFI_WIFI_H*/

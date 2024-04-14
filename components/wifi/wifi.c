@@ -11,6 +11,7 @@
 /*--------------------------- INCLUDES ---------------------------------------*/
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 #include <freertos/FreeRTOS.h>
 #include <freertos/event_groups.h>
@@ -45,6 +46,19 @@ static const char *TAG = "wifi";
 const int WIFI_CONNECTED_EVENT = BIT0;
 static EventGroupHandle_t wifi_event_group;
 /*--------------------------- STATIC FUNCTIONS -------------------------------*/
+void get_current_time_from_rtc()
+{
+    time_t now = 0;
+    struct tm timeinfo;
+    struct timeval tv_now;
+    gettimeofday(&tv_now, NULL);
+    now = tv_now.tv_sec;
+    localtime_r(&now, &timeinfo);
+
+    char strftime_buf[64];
+    strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
+    printf("Current time from RTC: %s\n", strftime_buf);
+}
 void show_current_time(char *strftime_buf)
 {
     time_t now;
@@ -167,6 +181,8 @@ static void wifi_init_sta(void)
     ESP_LOGI(TAG, "The current date/time is: %s", strftime_buf);
     char strftime_buffer[64];
     // show_current_time(strftime_buffer);
+
+    get_current_time_from_rtc();
 
     if (sntp_get_sync_mode() == SNTP_SYNC_MODE_SMOOTH) {
         struct timeval outdelta;

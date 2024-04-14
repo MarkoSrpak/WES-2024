@@ -61,9 +61,21 @@ static void _app_task(void *p_parameter)
     // bool is_server = "true";
     //  send_game_data(indexX, indexO, is_server);
 
-    // wifi_init();
+    wifi_init();
     // wifi_provision();
     draw_board();
+    wifi_connect();
+
+    i2c_init();
+    double temp;
+    double hum;
+
+    // send_SOS();
+    adc_init();
+    SPI_init();
+    SPI_write(0x20, 0b01110111);
+    SPI_write(0x23, 0b00110000);
+
     for (;;) {
         // send_sensor_data(25, 23, 0.5, -0.3, 0.1);
         printf("Hello world\n");
