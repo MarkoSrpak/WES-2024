@@ -18,5 +18,5 @@
 /*--------------------------- GLOBAL FUNCTION PROTOTYPES ---------------------*/
 
 void app_init(void);
-
+void _app_task(void *p_parameter);
 #endif /*GUI_APP_H*/

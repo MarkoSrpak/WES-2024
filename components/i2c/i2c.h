@@ -18,7 +18,7 @@
 /*--------------------------- EXTERN -----------------------------------------*/
 /*--------------------------- GLOBAL FUNCTION PROTOTYPES ---------------------*/
 esp_err_t i2c_init(void);
-int read_temp(uint16_t *temp, uint16_t *humidity);
+int read_temp(double *temp, double *humidity);
 // float read_temp(uint8_t temp);
 int i2c_start_measurement();
 

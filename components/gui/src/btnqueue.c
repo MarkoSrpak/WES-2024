@@ -22,6 +22,8 @@
 #include "lvgl.h"
 #include "lvgl_helpers.h"
 // squareline
+#include "../app.h"
+#include "led_pwm.h"
 #include "mqtt_driver.h"
 #include "tictac.h"
 #include "ui.h"
@@ -70,6 +72,7 @@ void _button_task(void *p_parameter)
             case BTN_CONN :
                 wifi_connect();
                 mqtt_init();
+                mqtt_subscribe_topic("WES/Jupiter/game");
                 lv_obj_set_style_bg_grad_color(ui_StartButton,
                                                lv_color_hex(0xE63451),
                                                LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -84,6 +87,7 @@ void _button_task(void *p_parameter)
             case BTN_PROV :
                 wifi_provision();
                 mqtt_init();
+                mqtt_subscribe_topic("WES/Jupiter/game");
                 lv_obj_set_style_bg_grad_color(ui_StartButton,
                                                lv_color_hex(0xE63451),
                                                LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -98,6 +102,9 @@ void _button_task(void *p_parameter)
             case BTN_UP :
             case BTN_START :
                 // switch ekran
+                xTaskCreatePinnedToCore(_app_task, "app", 4096 * 2, NULL, 0,
+                                        NULL, 0);
+                mqtt_subscribe_topic("WES/Jupiter/game");
                 _ui_screen_change(&ui_Screen2, LV_SCR_LOAD_ANIM_MOVE_LEFT, 500,
                                   0, &ui_Screen2_screen_init);
                 game_state = SCREEN2;
@@ -115,7 +122,9 @@ void _button_task(void *p_parameter)
                                   0, &ui_Screen3_screen_init);
                 game_state = SCREEN3;
                 break;
-
+            case BTN_DOWN :
+                led_on_pwm_pattern(1, 50, 250, 250);
+                break;
             default :
                 break;
             }

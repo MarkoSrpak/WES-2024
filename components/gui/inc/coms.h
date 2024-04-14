@@ -16,7 +16,7 @@
 /*--------------------------- TYPEDEFS AND STRUCTS ---------------------------*/
 /*--------------------------- EXTERN -----------------------------------------*/
 /*--------------------------- GLOBAL FUNCTION PROTOTYPES ---------------------*/
-
+void on_receive_cb(const char *p_topic, const char *p_data);
 int send_sensor_data(int temp, int hum, float x, float y, float z);
 int send_game_data(int *indexX_moves, int *indexO_moves, bool is_server);
 

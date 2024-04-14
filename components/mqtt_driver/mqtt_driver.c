@@ -31,6 +31,7 @@
 #include "lwip/netdb.h"
 #include "lwip/sockets.h"
 
+#include "coms.h"
 #include "esp_log.h"
 #include "mqtt_client.h"
 /*--------------------------- MACROS AND DEFINES -----------------------------*/
@@ -84,9 +85,31 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base,
         ESP_LOGI(TAG, "MQTT_EVENT_PUBLISHED, msg_id=%d", event->msg_id);
         break;
     case MQTT_EVENT_DATA :
-        ESP_LOGI(TAG, "MQTT_EVENT_DATA");
-        printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
-        printf("DATA=%.*s\r\n", event->data_len, event->data);
+        ESP_LOGI(TAG, "MQTT_EVENT_DATA:");
+        ESP_LOGI(TAG, "TOPIC=%.*s", event->topic_len, event->topic);
+        ESP_LOGI(TAG, "DATA=%.*s", event->data_len, event->data);
+
+        char *topic_buffer = (char *)malloc(event->topic_len + 1);
+        if (topic_buffer != NULL) {
+            memcpy(topic_buffer, event->topic, event->topic_len);
+            topic_buffer[event->topic_len] = '\0';
+
+            char *data_buffer = (char *)malloc(event->data_len + 1);
+            if (data_buffer != NULL) {
+                memcpy(data_buffer, event->data, event->data_len);
+                data_buffer[event->data_len] = '\0';
+
+                // zovi callback funkciju
+                on_receive_cb(topic_buffer, data_buffer);
+            }
+            if (NULL != data_buffer) {
+                free(data_buffer);
+            }
+        }
+
+        if (NULL != topic_buffer) {
+            free(topic_buffer);
+        }
         break;
     case MQTT_EVENT_ERROR :
         ESP_LOGI(TAG, "MQTT_EVENT_ERROR");
