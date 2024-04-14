@@ -76,6 +76,11 @@ extern lv_obj_t * ui_ResetLabel;
 void ui_event_PlayerButton(lv_event_t * e);
 extern lv_obj_t * ui_PlayerButton;
 extern lv_obj_t * ui_PlayerLabel;
+// SCREEN: ui_Screen4
+void ui_Screen4_screen_init(void);
+void ui_event_Screen4(lv_event_t * e);
+extern lv_obj_t * ui_Screen4;
+extern lv_obj_t * ui_Label9;
 extern lv_obj_t * ui____initial_actions0;
 
 LV_IMG_DECLARE(ui_img_bg_space1_png);    // assets\bg_space1.png

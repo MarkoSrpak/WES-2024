@@ -127,6 +127,28 @@ int reset_board()
 {
     memset(board, 0, sizeof(board));
     draw_board();
+
+    int winner = determine_winner();
+    char buffer[20];
+    if (winner == 1) {
+        sprintf(buffer, "WINNER IS X");
+        lv_label_set_text(ui_Label9, buffer);
+        _ui_screen_change(&ui_Screen4, LV_SCR_LOAD_ANIM_MOVE_RIGHT, 500, 0,
+                          &ui_Screen2_screen_init);
+    }
+    if (winner == 2) {
+        sprintf(buffer, "WINNER IS O");
+        lv_label_set_text(ui_Label9, buffer);
+        _ui_screen_change(&ui_Screen4, LV_SCR_LOAD_ANIM_MOVE_RIGHT, 500, 0,
+                          &ui_Screen2_screen_init);
+    }
+    if (winner == -1) {
+        sprintf(buffer, "DRAW");
+        lv_label_set_text(ui_Label9, buffer);
+        _ui_screen_change(&ui_Screen4, LV_SCR_LOAD_ANIM_MOVE_RIGHT, 500, 0,
+                          &ui_Screen2_screen_init);
+    }
+
     return 0;
 }
 int draw_board()

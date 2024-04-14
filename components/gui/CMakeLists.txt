@@ -14,6 +14,7 @@ idf_component_register(
         "squareline/screens/ui_Screen1.c"
         "squareline/screens/ui_Screen2.c"
         "squareline/screens/ui_Screen3.c"
+        "squareline/screens/ui_Screen4.c"
 
         "squareline/images/ui_img_bg_space1_png.c"
         "squareline/images/ui_img_dashboard3_png.c"

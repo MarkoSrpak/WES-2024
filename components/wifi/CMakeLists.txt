@@ -1,5 +1,5 @@
 set(COMPONENT_SRCS "wifi.c")
 set(COMPONENT_ADD_INCLUDEDIRS ".")
-set(COMPONENT_REQUIRES esp_wifi nvs_flash wifi_provisioning)
+set(COMPONENT_REQUIRES esp_wifi nvs_flash wifi_provisioning gui)
 
 register_component()

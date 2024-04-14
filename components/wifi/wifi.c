@@ -25,6 +25,8 @@
 #include <esp_wifi.h>
 #include <nvs_flash.h>
 
+#include "ui.h"
+
 #include <wifi_provisioning/manager.h>
 #include <wifi_provisioning/scheme_ble.h>
 #include <wifi_provisioning/scheme_softap.h>
@@ -58,6 +60,7 @@ void get_current_time_from_rtc()
     char strftime_buf[64];
     strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
     printf("Current time from RTC: %s\n", strftime_buf);
+    lv_label_set_text(ui_TimeLabel, strftime_buf);
 }
 void show_current_time(char *strftime_buf)
 {

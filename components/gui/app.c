@@ -103,6 +103,7 @@ void _app_task(void *p_parameter)
         } else if (xadc < 10) {
             xQueueSend(btn_queue, &btn_right, 0);
         }
+        get_current_time_from_rtc();
     }
 }
 
