@@ -10,6 +10,23 @@
 extern "C" {
 #endif
 
+void startBtnCb(lv_event_t * e);
+void provisionBtnCb(lv_event_t * e);
+void connectBtnCb(lv_event_t * e);
+void playBtnCb(lv_event_t * e);
+void resetBtnCb(lv_event_t * e);
+void field0Cb(lv_event_t * e);
+void field1Cb(lv_event_t * e);
+void field2Cb(lv_event_t * e);
+void field3Cb(lv_event_t * e);
+void field4Cb(lv_event_t * e);
+void field5Cb(lv_event_t * e);
+void field6Cb(lv_event_t * e);
+void field7Cb(lv_event_t * e);
+void field8Cb(lv_event_t * e);
+void backBtnCb(lv_event_t * e);
+void playerBtnCb(lv_event_t * e);
+
 #ifdef __cplusplus
 } /*extern "C"*/
 #endif

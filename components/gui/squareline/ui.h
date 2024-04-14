@@ -13,13 +13,78 @@ extern "C" {
 #include "lvgl.h"
 
 #include "ui_helpers.h"
+#include "components/ui_comp.h"
+#include "components/ui_comp_hook.h"
 #include "ui_events.h"
 // SCREEN: ui_Screen1
 void ui_Screen1_screen_init(void);
 extern lv_obj_t * ui_Screen1;
-extern lv_obj_t * ui_Label1;
+void ui_event_StartButton(lv_event_t * e);
+extern lv_obj_t * ui_StartButton;
+extern lv_obj_t * ui_StartLabel;
+void ui_event_ProvisionButton(lv_event_t * e);
+extern lv_obj_t * ui_ProvisionButton;
+extern lv_obj_t * ui_ProvisionLabel;
+void ui_event_ConnectButton(lv_event_t * e);
+extern lv_obj_t * ui_ConnectButton;
+extern lv_obj_t * ui_ConnectLabel;
+extern lv_obj_t * ui_ImageJupiter;
+// SCREEN: ui_Screen2
+void ui_Screen2_screen_init(void);
+extern lv_obj_t * ui_Screen2;
+void ui_event_PlayButton(lv_event_t * e);
+extern lv_obj_t * ui_PlayButton;
+extern lv_obj_t * ui_PlayLabel;
+extern lv_obj_t * ui_TempPanel;
+extern lv_obj_t * ui_TempLabel;
+extern lv_obj_t * ui_HumPanel;
+extern lv_obj_t * ui_HumLabel;
+extern lv_obj_t * ui_AccPanel;
+extern lv_obj_t * ui_AccLabel;
+extern lv_obj_t * ui_TimePanel;
+extern lv_obj_t * ui_TimeLabel;
+// SCREEN: ui_Screen3
+void ui_Screen3_screen_init(void);
+void ui_event_Screen3(lv_event_t * e);
+extern lv_obj_t * ui_Screen3;
+void ui_event_Button0(lv_event_t * e);
+extern lv_obj_t * ui_Button0;
+void ui_event_Button1(lv_event_t * e);
+extern lv_obj_t * ui_Button1;
+void ui_event_Button2(lv_event_t * e);
+extern lv_obj_t * ui_Button2;
+void ui_event_Button3(lv_event_t * e);
+extern lv_obj_t * ui_Button3;
+void ui_event_Button4(lv_event_t * e);
+extern lv_obj_t * ui_Button4;
+void ui_event_Button5(lv_event_t * e);
+extern lv_obj_t * ui_Button5;
+void ui_event_Button6(lv_event_t * e);
+extern lv_obj_t * ui_Button6;
+void ui_event_Button7(lv_event_t * e);
+extern lv_obj_t * ui_Button7;
+extern lv_obj_t * ui_iconX;
+void ui_event_Button8(lv_event_t * e);
+extern lv_obj_t * ui_Button8;
+extern lv_obj_t * ui_iconO;
+void ui_event_BackButton(lv_event_t * e);
+extern lv_obj_t * ui_BackButton;
+extern lv_obj_t * ui_BackLabel2;
+void ui_event_ResetButton(lv_event_t * e);
+extern lv_obj_t * ui_ResetButton;
+extern lv_obj_t * ui_ResetLabel;
+void ui_event_PlayerButton(lv_event_t * e);
+extern lv_obj_t * ui_PlayerButton;
+extern lv_obj_t * ui_PlayerLabel;
 extern lv_obj_t * ui____initial_actions0;
 
+LV_IMG_DECLARE(ui_img_bg_space1_png);    // assets\bg_space1.png
+LV_IMG_DECLARE(ui_img_logo3_png);    // assets\logo3.png
+LV_IMG_DECLARE(ui_img_dashboard3_png);    // assets\dashboard3.png
+LV_IMG_DECLARE(ui_img_x_icon2_png);    // assets\x_icon2.png
+LV_IMG_DECLARE(ui_img_o_icon3_png);    // assets\o_icon3.png
+LV_IMG_DECLARE(ui_img_logo2_png);    // assets\logo2.png
+LV_IMG_DECLARE(ui_img_logo4_png);    // assets\logo4.png
 
 
 

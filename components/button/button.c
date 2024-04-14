@@ -10,9 +10,11 @@
 
 /*--------------------------- INCLUDES ---------------------------------------*/
 #include "button.h"
+#include "btnqueue.h"
 #include "driver/gpio.h"
 #include "esp_err.h"
 #include "freertos/FreeRTOS.h"
+#include "freertos/queue.h"
 #include "freertos/task.h"
 #include "freertos/timers.h"
 #include <stdio.h>
@@ -47,6 +49,7 @@ static void IRAM_ATTR _btn_1_isr(void *p_arg)
 {
     (void)p_arg; /* Suppress the unused variable warning*/
     if (pdFALSE == xTimerIsTimerActive(xTimers[0])) {
+        xQueueSendFromISR(btn_queue, &btn_up, pdFALSE);
         xTimerStartFromISR(xTimers[0], pdFALSE);
     }
 }
@@ -55,6 +58,7 @@ static void IRAM_ATTR _btn_2_isr(void *p_arg)
 {
     (void)p_arg; /* Suppress the unused variable warning*/
     if (pdFALSE == xTimerIsTimerActive(xTimers[1])) {
+        xQueueSendFromISR(btn_queue, &btn_right, pdFALSE);
         xTimerStartFromISR(xTimers[1], pdFALSE);
     }
 }
@@ -63,6 +67,7 @@ static void IRAM_ATTR _btn_3_isr(void *p_arg)
 {
     (void)p_arg; /* Suppress the unused variable warning*/
     if (pdFALSE == xTimerIsTimerActive(xTimers[2])) {
+        xQueueSendFromISR(btn_queue, &btn_down, pdFALSE);
         xTimerStartFromISR(xTimers[2], pdFALSE);
     }
 }
@@ -71,6 +76,7 @@ static void IRAM_ATTR _btn_4_isr(void *p_arg)
 {
     (void)p_arg; /* Suppress the unused variable warning*/
     if (pdFALSE == xTimerIsTimerActive(xTimers[3])) {
+        xQueueSendFromISR(btn_queue, &btn_left, pdFALSE);
         xTimerStartFromISR(xTimers[3], pdFALSE);
     }
 }

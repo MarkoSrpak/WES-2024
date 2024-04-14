@@ -88,6 +88,8 @@ int send_game_data(int *indexX_moves, int *indexO_moves, bool is_server)
     // Print JSON data for testing
     printf("JSON Data: %s\n", json_data);
 
+    mqtt_publish("WES/Jupiter/game", json_data);
+
     cJSON_Delete(root);
     free(json_data);
 

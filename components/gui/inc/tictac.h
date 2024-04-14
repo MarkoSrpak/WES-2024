@@ -8,16 +8,22 @@
  *
  */
 
-#ifndef BUTTON_BUTTON_H
-#define BUTTON_BUTTON_H
+#ifndef INC_TICTAC_H
+#define INC_TICTAC_H
 
 /*--------------------------- INCLUDES ---------------------------------------*/
-#include "btnqueue.h"
+#include "ui.h"
 /*--------------------------- MACROS AND DEFINES -----------------------------*/
 /*--------------------------- TYPEDEFS AND STRUCTS ---------------------------*/
 /*--------------------------- EXTERN -----------------------------------------*/
 /*--------------------------- GLOBAL FUNCTION PROTOTYPES ---------------------*/
+int reset_board();
+int draw_board();
+int draw_field(int field_num, int type);
+void add_image_to_button(lv_obj_t *button, lv_img_dsc_t *image_descriptor,
+                         int field_num);
+void remove_image_from_button(lv_obj_t *button);
+int send_empty();
+int add_piece(int position, int type);
 
-int button_init();
-
-#endif /*BUTTON_BUTTON_H*/
+#endif /*INC_TICTAC_H*/

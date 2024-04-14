@@ -67,7 +67,7 @@ void gui_init()
     potential issues.
     * NOTE: When not using Wi-Fi nor Bluetooth, you can pin the GUI task to Core
     0.*/
-    xTaskCreatePinnedToCore(_gui_task, "gui", 4096 * 2, NULL, 0, NULL, 1);
+    xTaskCreatePinnedToCore(_gui_task, "gui", 4096 * 2, NULL, 2, NULL, 1);
 }
 
 //---------------------------- PRIVATE FUNCTIONS ------------------------------
